@@ -1,84 +1,10 @@
-// Local storage functions
-function getLocalPublications() {
-  const stored = localStorage.getItem('publications');
-  return stored ? JSON.parse(stored) : [];
-}
+import { createClient } from '@supabase/supabase-js';
 
-function saveLocalPublications(publications: any[]) {
-  localStorage.setItem('publications', JSON.stringify(publications));
-}
+// Supabase configuration
+const supabaseUrl = 'https://tabypkvcyymiidrghhvc.supabase.co';
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRhYnlwa3ZjeXltaWlkcmdoaHZjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk1NjcxNzksImV4cCI6MjA3NTE0MzE3OX0.-V6t0jNoviCnK_Y9q-0CeiX1EhNdclf90GesPfwFK7w';
 
-// Temporary local storage solution until Supabase is properly configured
-export const supabase = {
-  from: (table: string) => {
-    if (table === 'publications') {
-      return {
-        insert: (data: any[]) => ({
-          select: () => {
-            console.log('💾 Saving to localStorage:', data);
-            const publications = getLocalPublications();
-            const newPublications = data.map(item => ({
-              ...item,
-              id: crypto.randomUUID(),
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString()
-            }));
-            const updatedPublications = [...publications, ...newPublications];
-            saveLocalPublications(updatedPublications);
-            console.log('✅ Saved publications:', updatedPublications);
-            return Promise.resolve({ data: newPublications, error: null });
-          }
-        }),
-        select: (columns: string = '*') => {
-          console.log('📖 Reading from localStorage');
-          const publications = getLocalPublications();
-          console.log('📖 Found publications:', publications);
-          return {
-            eq: (column: string, value: any) => ({
-              in: (column2: string, values: any[]) => Promise.resolve({ 
-                data: publications, 
-                error: null 
-              })
-            }),
-            in: (column: string, values: any[]) => Promise.resolve({ 
-              data: publications, 
-              error: null 
-            }),
-            gte: (column: string, value: any) => ({
-              lte: (column2: string, value2: any) => Promise.resolve({ 
-                data: publications, 
-                error: null 
-              })
-            }),
-            lte: (column: string, value: any) => Promise.resolve({ 
-              data: publications, 
-              error: null 
-            }),
-            overlaps: (column: string, values: any[]) => Promise.resolve({ 
-              data: publications, 
-              error: null 
-            }),
-            order: (column: string, options: any) => Promise.resolve({ 
-              data: publications, 
-              error: null 
-            })
-          };
-        }
-      };
-    }
-    return {
-      insert: () => ({ select: () => Promise.resolve({ data: [], error: null }) }),
-      select: () => ({ 
-        eq: () => ({ in: () => Promise.resolve({ data: [], error: null }) }),
-        in: () => Promise.resolve({ data: [], error: null }),
-        gte: () => ({ lte: () => Promise.resolve({ data: [], error: null }) }),
-        lte: () => Promise.resolve({ data: [], error: null }),
-        overlaps: () => Promise.resolve({ data: [], error: null }),
-        order: () => Promise.resolve({ data: [], error: null })
-      })
-    };
-  }
-};
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Database Types
 export interface Publication {

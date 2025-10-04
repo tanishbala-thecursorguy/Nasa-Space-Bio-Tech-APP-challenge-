@@ -34,31 +34,6 @@ export const Dashboard: React.FC = () => {
     });
   };
 
-  useEffect(() => {
-    // Add a test publication to localStorage for debugging
-    const testPublication = {
-      id: crypto.randomUUID(),
-      author_name: 'Test Author',
-      project_name: 'Test Space Biology Project',
-      summary: 'This is a test publication about space biology research conducted on the ISS. The study examines the effects of microgravity on human cells and provides valuable insights for future space missions.',
-      project_link: 'https://example.com/test-project',
-      species: ['Humans'],
-      missions: ['ISS'],
-      year: 2024,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    };
-
-    const existingPublications = JSON.parse(localStorage.getItem('publications') || '[]');
-    console.log('📚 Current publications in localStorage:', existingPublications);
-    
-    if (existingPublications.length === 0) {
-      localStorage.setItem('publications', JSON.stringify([testPublication]));
-      console.log('🧪 Added test publication to localStorage:', testPublication);
-    } else {
-      console.log('📚 Found existing publications:', existingPublications.length);
-    }
-  }, []);
 
   return (
     <div className="h-screen bg-black overflow-hidden">
