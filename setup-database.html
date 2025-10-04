@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supabase Database Setup</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        .container {
+            background: #2a2a2a;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        h1 { color: #60a5fa; }
+        h2 { color: #93c5fd; }
+        .sql-box {
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 5px;
+            border: 1px solid #444;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+        pre {
+            margin: 0;
+            white-space: pre-wrap;
+            color: #a8dadc;
+        }
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px 10px 0;
+        }
+        button:hover {
+            background: #1d4ed8;
+        }
+        .success {
+            background: #065f46;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .error {
+            background: #991b1b;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .warning {
+            background: #92400e;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .step {
+            background: #374151;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 4px solid #60a5fa;
+        }
+        code {
+            background: #1a1a1a;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #fbbf24;
+        }
+        a {
+            color: #60a5fa;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 NASA Space Biology Dashboard - Database Setup</h1>
+        <p>Follow these steps to set up your Supabase database table:</p>
+    </div>
+
+    <div class="container">
+        <h2>Step 1: Copy the SQL Script</h2>
+        <div class="sql-box">
+            <pre id="sqlScript">-- Create publications table for NASA Space Biology Dashboard
+CREATE TABLE IF NOT EXISTS publications (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  author_name TEXT NOT NULL,
+  project_name TEXT NOT NULL,
+  summary TEXT NOT NULL,
+  project_link TEXT NOT NULL,
+  species TEXT[] NOT NULL,
+  missions TEXT[] NOT NULL,
+  year INTEGER NOT NULL CHECK (year >= 2015 AND year <= 2025),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
+);
+
+-- Create indexes for better performance
+CREATE INDEX IF NOT EXISTS idx_publications_year ON publications(year);
+CREATE INDEX IF NOT EXISTS idx_publications_species ON publications USING GIN(species);
+CREATE INDEX IF NOT EXISTS idx_publications_missions ON publications USING GIN(missions);
+CREATE INDEX IF NOT EXISTS idx_publications_created_at ON publications(created_at DESC);
+
+-- Enable Row Level Security
+ALTER TABLE publications ENABLE ROW LEVEL SECURITY;
+
+-- Drop existing policies if they exist
+DROP POLICY IF EXISTS "Allow public read access" ON publications;
+DROP POLICY IF EXISTS "Allow public insert access" ON publications;
+DROP POLICY IF EXISTS "Allow public update access" ON publications;
+
+-- Create policies to allow public access
+CREATE POLICY "Allow public read access" 
+  ON publications FOR SELECT 
+  TO public 
+  USING (true);
+
+CREATE POLICY "Allow public insert access" 
+  ON publications FOR INSERT 
+  TO public 
+  WITH CHECK (true);
+
+CREATE POLICY "Allow public update access" 
+  ON publications FOR UPDATE 
+  TO public 
+  USING (true) 
+  WITH CHECK (true);
+
+-- Create updated_at trigger function
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = TIMEZONE('utc'::text, NOW());
+  RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+-- Drop trigger if exists
+DROP TRIGGER IF EXISTS update_publications_updated_at ON publications;
+
+-- Create trigger
+CREATE TRIGGER update_publications_updated_at
+  BEFORE UPDATE ON publications
+  FOR EACH ROW
+  EXECUTE FUNCTION update_updated_at_column();</pre>
+        </div>
+        <button onclick="copySqlScript()">📋 Copy SQL Script</button>
+        <div id="copyStatus"></div>
+    </div>
+
+    <div class="container">
+        <h2>Step 2: Go to Supabase SQL Editor</h2>
+        <div class="step">
+            <p><strong>1.</strong> Open your Supabase project:</p>
+            <a href="https://supabase.com/dashboard/project/tabypkvcyymiidrghhvc" target="_blank">
+                https://supabase.com/dashboard/project/tabypkvcyymiidrghhvc
+            </a>
+        </div>
+        <div class="step">
+            <p><strong>2.</strong> Click <code>SQL Editor</code> in the left sidebar</p>
+        </div>
+        <div class="step">
+            <p><strong>3.</strong> Click <code>New Query</code> button</p>
+        </div>
+        <div class="step">
+            <p><strong>4.</strong> Paste the SQL script you copied</p>
+        </div>
+        <div class="step">
+            <p><strong>5.</strong> Click <code>Run</code> or press <code>Ctrl+Enter</code> (Windows) / <code>Cmd+Enter</code> (Mac)</p>
+        </div>
+        <div class="step">
+            <p><strong>6.</strong> You should see: <span style="color: #10b981">"Success. No rows returned"</span></p>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Step 3: Verify the Setup</h2>
+        <button onclick="testConnection()">🧪 Test Supabase Connection</button>
+        <div id="testResult"></div>
+    </div>
+
+    <div class="container">
+        <h2>Step 4: Return to Your App</h2>
+        <div class="success">
+            <p><strong>✅ Once the SQL runs successfully:</strong></p>
+            <ul>
+                <li>Go back to <a href="http://localhost:3000" target="_blank">http://localhost:3000</a></li>
+                <li>Refresh the page (F5)</li>
+                <li>Click the "Post" button</li>
+                <li>Fill out the form and click "Add Publication"</li>
+                <li>Your publication will appear immediately! 🎉</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Troubleshooting</h2>
+        <div class="warning">
+            <h3>If you get an error in Supabase:</h3>
+            <ul>
+                <li><strong>Permission denied:</strong> Make sure you're logged into Supabase and have access to the project</li>
+                <li><strong>Table already exists:</strong> The table is already set up! Try adding a publication</li>
+                <li><strong>Syntax error:</strong> Make sure you copied the entire SQL script</li>
+            </ul>
+        </div>
+        <div class="warning">
+            <h3>If publications still don't appear:</h3>
+            <ul>
+                <li>Open browser console (F12) and check for error messages</li>
+                <li>Verify your Supabase URL and API key in the .env file</li>
+                <li>Make sure RLS policies are enabled (the SQL script does this automatically)</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function copySqlScript() {
+            const sqlScript = document.getElementById('sqlScript').textContent;
+            navigator.clipboard.writeText(sqlScript).then(() => {
+                document.getElementById('copyStatus').innerHTML = 
+                    '<div class="success">✅ SQL script copied to clipboard!</div>';
+                setTimeout(() => {
+                    document.getElementById('copyStatus').innerHTML = '';
+                }, 3000);
+            }).catch(err => {
+                document.getElementById('copyStatus').innerHTML = 
+                    '<div class="error">❌ Failed to copy. Please select and copy manually.</div>';
+            });
+        }
+
+        async function testConnection() {
+            const resultDiv = document.getElementById('testResult');
+            resultDiv.innerHTML = '<p>Testing connection...</p>';
+
+            try {
+                const response = await fetch('http://localhost:3000');
+                if (response.ok) {
+                    resultDiv.innerHTML = 
+                        '<div class="success">✅ Your app is running at http://localhost:3000</div>';
+                } else {
+                    resultDiv.innerHTML = 
+                        '<div class="error">❌ Cannot reach your app. Make sure it\'s running.</div>';
+                }
+            } catch (err) {
+                resultDiv.innerHTML = 
+                    '<div class="error">❌ App not running. Start it with: npm run dev</div>';
+            }
+        }
+
+        // Auto-test connection on page load
+        window.onload = () => {
+            setTimeout(testConnection, 1000);
+        };
+    </script>
+</body>
+</html>
+
