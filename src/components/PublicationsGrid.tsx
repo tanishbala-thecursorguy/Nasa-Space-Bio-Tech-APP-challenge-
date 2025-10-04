@@ -33,37 +33,42 @@ export const PublicationsGrid: React.FC<PublicationsGridProps> = ({
     console.log('📚 Fetching publications... refreshTrigger:', refreshTrigger);
 
     try {
-      let query = supabase
+      const { data, error: fetchError } = await supabase
         .from('publications')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      console.log('🔍 Applied filters:', filters);
-
-      // Apply species filter
-      if (filters.species.length > 0) {
-        query = query.overlaps('species', filters.species);
-      }
-
-      // Apply missions filter
-      if (filters.missions.length > 0) {
-        query = query.overlaps('missions', filters.missions);
-      }
-
-      // Apply year range filter
-      query = query
-        .gte('year', filters.yearRange[0])
-        .lte('year', filters.yearRange[1]);
-
-      const { data, error: fetchError } = await query;
+        .select('*');
 
       console.log('📊 Fetched publications data:', data);
       console.log('📊 Fetch error:', fetchError);
 
       if (fetchError) throw fetchError;
 
-      setPublications(data || []);
-      console.log('✅ Publications updated! Count:', data?.length || 0);
+      // Apply filters locally since we're using localStorage
+      let filteredData = data || [];
+      
+      // Apply species filter
+      if (filters.species.length > 0) {
+        filteredData = filteredData.filter(pub => 
+          pub.species.some((species: string) => filters.species.includes(species))
+        );
+      }
+
+      // Apply missions filter
+      if (filters.missions.length > 0) {
+        filteredData = filteredData.filter(pub => 
+          pub.missions.some((mission: string) => filters.missions.includes(mission))
+        );
+      }
+
+      // Apply year range filter
+      filteredData = filteredData.filter(pub => 
+        pub.year >= filters.yearRange[0] && pub.year <= filters.yearRange[1]
+      );
+
+      // Sort by created_at descending
+      filteredData.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+
+      setPublications(filteredData);
+      console.log('✅ Publications updated! Count:', filteredData.length);
     } catch (err) {
       console.error('❌ Error fetching publications:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch publications');

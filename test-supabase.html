@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supabase Connection Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 12px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+        h1 {
+            color: #3b82f6;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #3b82f6;
+        }
+        .test-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 0;
+            width: 100%;
+        }
+        .test-btn:hover {
+            background: #2563eb;
+        }
+        .test-btn:disabled {
+            background: #64748b;
+            cursor: not-allowed;
+        }
+        .status {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .status.loading {
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid #3b82f6;
+        }
+        .status.success {
+            background: rgba(34, 197, 94, 0.2);
+            border: 1px solid #22c55e;
+        }
+        .status.error {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid #ef4444;
+        }
+        .code-block {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+        }
+        .input-group {
+            margin: 15px 0;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #334155;
+            border-radius: 4px;
+            background: #1e293b;
+            color: white;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Supabase Connection Test</h1>
+        
+        <div class="test-section">
+            <h3>Step 1: Get Your Supabase Credentials</h3>
+            <p>Go to your <a href="https://supabase.com/dashboard/project/tabypkvcyymiidrghhvc" target="_blank" style="color: #60a5fa;">Supabase Dashboard</a> and get:</p>
+            <ol>
+                <li><strong>Project URL:</strong> Go to Settings → API → Project URL</li>
+                <li><strong>Anon Key:</strong> Go to Settings → API → Project API keys → anon public</li>
+            </ol>
+        </div>
+
+        <div class="test-section">
+            <h3>Step 2: Test Connection</h3>
+            <div class="input-group">
+                <label for="supabase-url">Supabase URL:</label>
+                <input type="text" id="supabase-url" value="https://tabypkvcyymiidrghhvc.supabase.co" placeholder="https://your-project.supabase.co">
+            </div>
+            <div class="input-group">
+                <label for="supabase-key">Anon Key:</label>
+                <input type="text" id="supabase-key" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." style="font-size: 12px;">
+            </div>
+            
+            <button class="test-btn" onclick="testConnection()">🧪 Test Connection</button>
+            <div id="connection-status"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>Step 3: Create Publications Table</h3>
+            <p>If the connection works, click below to create the publications table:</p>
+            <button class="test-btn" onclick="createTable()">🏗️ Create Publications Table</button>
+            <div id="table-status"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>Step 4: Test Insert</h3>
+            <p>If the table was created, test inserting a publication:</p>
+            <button class="test-btn" onclick="testInsert()">📝 Test Insert Publication</button>
+            <div id="insert-status"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>Step 5: Update App Configuration</h3>
+            <p>Once everything works, copy this configuration to your app:</p>
+            <div class="code-block" id="config-code">
+                // Update src/lib/supabase.ts with these values:<br>
+                const supabaseUrl = 'YOUR_URL_HERE';<br>
+                const supabaseAnonKey = 'YOUR_KEY_HERE';
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUrl = '';
+        let currentKey = '';
+
+        function updateConfig() {
+            const configCode = document.getElementById('config-code');
+            configCode.innerHTML = `// Update src/lib/supabase.ts with these values:<br>
+const supabaseUrl = '${currentUrl}';<br>
+const supabaseAnonKey = '${currentKey}';`;
+        }
+
+        async function testConnection() {
+            const url = document.getElementById('supabase-url').value;
+            const key = document.getElementById('supabase-key').value;
+            const statusDiv = document.getElementById('connection-status');
+            
+            if (!url || !key) {
+                statusDiv.innerHTML = '<div class="status error">❌ Please enter both URL and Key</div>';
+                return;
+            }
+
+            currentUrl = url;
+            currentKey = key;
+            updateConfig();
+
+            statusDiv.innerHTML = '<div class="status loading">🔄 Testing connection...</div>';
+
+            try {
+                const response = await fetch(`${url}/rest/v1/`, {
+                    headers: {
+                        'apikey': key,
+                        'Authorization': `Bearer ${key}`
+                    }
+                });
+
+                if (response.ok) {
+                    statusDiv.innerHTML = '<div class="status success">✅ Connection successful! Supabase is accessible.</div>';
+                } else {
+                    const error = await response.text();
+                    statusDiv.innerHTML = `<div class="status error">❌ Connection failed: ${error}</div>`;
+                }
+            } catch (error) {
+                statusDiv.innerHTML = `<div class="status error">❌ Network error: ${error.message}</div>`;
+            }
+        }
+
+        async function createTable() {
+            if (!currentUrl || !currentKey) {
+                document.getElementById('table-status').innerHTML = '<div class="status error">❌ Please test connection first</div>';
+                return;
+            }
+
+            const statusDiv = document.getElementById('table-status');
+            statusDiv.innerHTML = '<div class="status loading">🔄 Creating publications table...</div>';
+
+            try {
+                // Try to create table using a simple insert to test if it exists
+                const testResponse = await fetch(`${currentUrl}/rest/v1/publications?select=id&limit=1`, {
+                    headers: {
+                        'apikey': currentKey,
+                        'Authorization': `Bearer ${currentKey}`
+                    }
+                });
+
+                if (testResponse.ok) {
+                    statusDiv.innerHTML = '<div class="status success">✅ Publications table already exists!</div>';
+                } else {
+                    statusDiv.innerHTML = '<div class="status error">❌ Table does not exist. Please create it manually in Supabase Dashboard → SQL Editor with this script:<br><br><code>CREATE TABLE publications (id UUID DEFAULT gen_random_uuid() PRIMARY KEY, author_name TEXT NOT NULL, project_name TEXT NOT NULL, summary TEXT NOT NULL, project_link TEXT NOT NULL, species TEXT[] NOT NULL, missions TEXT[] NOT NULL, year INTEGER NOT NULL, created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(), updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW());</code></div>';
+                }
+            } catch (error) {
+                statusDiv.innerHTML = `<div class="status error">❌ Error: ${error.message}</div>`;
+            }
+        }
+
+        async function testInsert() {
+            if (!currentUrl || !currentKey) {
+                document.getElementById('insert-status').innerHTML = '<div class="status error">❌ Please test connection first</div>';
+                return;
+            }
+
+            const statusDiv = document.getElementById('insert-status');
+            statusDiv.innerHTML = '<div class="status loading">🔄 Testing insert...</div>';
+
+            try {
+                const testData = {
+                    author_name: 'Test Author',
+                    project_name: 'Test Project',
+                    summary: 'This is a test publication',
+                    project_link: 'https://example.com',
+                    species: ['Humans'],
+                    missions: ['ISS'],
+                    year: 2024
+                };
+
+                const response = await fetch(`${currentUrl}/rest/v1/publications`, {
+                    method: 'POST',
+                    headers: {
+                        'apikey': currentKey,
+                        'Authorization': `Bearer ${currentKey}`,
+                        'Content-Type': 'application/json',
+                        'Prefer': 'return=minimal'
+                    },
+                    body: JSON.stringify(testData)
+                });
+
+                if (response.ok) {
+                    statusDiv.innerHTML = '<div class="status success">✅ Insert successful! Your app should work now.</div>';
+                } else {
+                    const error = await response.text();
+                    statusDiv.innerHTML = `<div class="status error">❌ Insert failed: ${error}</div>`;
+                }
+            } catch (error) {
+                statusDiv.innerHTML = `<div class="status error">❌ Error: ${error.message}</div>`;
+            }
+        }
+    </script>
+</body>
+</html>
