@@ -121,7 +121,19 @@ export function AddPublicationDialog({ open, onOpenChange, onPublicationAdded }:
 
       if (insertError) {
         console.error('❌ Insert error:', insertError);
-        throw insertError;
+        console.error('❌ Error details:', {
+          message: insertError.message,
+          details: insertError.details,
+          hint: insertError.hint,
+          code: insertError.code
+        });
+        
+        if (insertError.code === '42P01') {
+          alert('❌ DATABASE TABLE NOT FOUND!\n\nThe "publications" table does not exist in your Supabase database.\n\nPlease:\n1. Open create-table.html in your browser\n2. Follow the instructions to create the table\n3. Then try posting again');
+        } else {
+          throw insertError;
+        }
+        return;
       }
 
       console.log('✅ Publication added successfully!');
