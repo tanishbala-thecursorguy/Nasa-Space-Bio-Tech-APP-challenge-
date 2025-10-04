@@ -149,31 +149,33 @@ export function AddPublicationDialog({ open, onOpenChange, onPublicationAdded }:
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Author Name */}
           <div className="space-y-2">
-            <Label htmlFor="author_name">Name *</Label>
+            <Label htmlFor="author_name" className="text-white font-medium">Name *</Label>
             <Input
               id="author_name"
               placeholder="Enter your name"
               value={formData.author_name}
               onChange={(e) => setFormData(prev => ({ ...prev, author_name: e.target.value }))}
               required
+              className="bg-gray-800 text-white border-gray-700"
             />
           </div>
 
           {/* Project Name */}
           <div className="space-y-2">
-            <Label htmlFor="project_name">Project Name *</Label>
+            <Label htmlFor="project_name" className="text-white font-medium">Project Name *</Label>
             <Input
               id="project_name"
               placeholder="Enter project name"
               value={formData.project_name}
               onChange={(e) => setFormData(prev => ({ ...prev, project_name: e.target.value }))}
               required
+              className="bg-gray-800 text-white border-gray-700"
             />
           </div>
 
           {/* Summary */}
           <div className="space-y-2">
-            <Label htmlFor="summary">Summary *</Label>
+            <Label htmlFor="summary" className="text-white font-medium">Summary *</Label>
             <Textarea
               id="summary"
               placeholder="Enter project summary (10-15 lines recommended, but no limit)"
@@ -181,12 +183,13 @@ export function AddPublicationDialog({ open, onOpenChange, onPublicationAdded }:
               onChange={(e) => setFormData(prev => ({ ...prev, summary: e.target.value }))}
               rows={6}
               required
+              className="bg-gray-800 text-white border-gray-700"
             />
           </div>
 
           {/* Project Link */}
           <div className="space-y-2">
-            <Label htmlFor="project_link">Project Link *</Label>
+            <Label htmlFor="project_link" className="text-white font-medium">Project Link *</Label>
             <Input
               id="project_link"
               type="url"
@@ -194,12 +197,13 @@ export function AddPublicationDialog({ open, onOpenChange, onPublicationAdded }:
               value={formData.project_link}
               onChange={(e) => setFormData(prev => ({ ...prev, project_link: e.target.value }))}
               required
+              className="bg-gray-800 text-white border-gray-700"
             />
           </div>
 
           {/* Species Filter */}
           <div className="space-y-3">
-            <Label>Species * (Select at least one)</Label>
+            <Label className="text-white font-medium">Species * (Select at least one)</Label>
             <div className="grid grid-cols-2 gap-3">
               {SPECIES_OPTIONS.map((species) => (
                 <div key={species} className="flex items-center space-x-2">
@@ -207,10 +211,11 @@ export function AddPublicationDialog({ open, onOpenChange, onPublicationAdded }:
                     id={`species-${species}`}
                     checked={formData.species.includes(species)}
                     onCheckedChange={() => handleSpeciesToggle(species)}
+                    className="border-gray-600"
                   />
                   <label
                     htmlFor={`species-${species}`}
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                    className="text-sm font-medium leading-none text-white cursor-pointer"
                   >
                     {species}
                   </label>
@@ -221,7 +226,7 @@ export function AddPublicationDialog({ open, onOpenChange, onPublicationAdded }:
 
           {/* Mission Type Filter */}
           <div className="space-y-3">
-            <Label>Mission Type * (Select at least one)</Label>
+            <Label className="text-white font-medium">Mission Type * (Select at least one)</Label>
             <div className="grid grid-cols-2 gap-3">
               {MISSION_OPTIONS.map((mission) => (
                 <div key={mission} className="flex items-center space-x-2">
@@ -229,10 +234,11 @@ export function AddPublicationDialog({ open, onOpenChange, onPublicationAdded }:
                     id={`mission-${mission}`}
                     checked={formData.missions.includes(mission)}
                     onCheckedChange={() => handleMissionToggle(mission)}
+                    className="border-gray-600"
                   />
                   <label
                     htmlFor={`mission-${mission}`}
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                    className="text-sm font-medium leading-none text-white cursor-pointer"
                   >
                     {mission}
                   </label>
@@ -243,12 +249,12 @@ export function AddPublicationDialog({ open, onOpenChange, onPublicationAdded }:
 
           {/* Year Selector */}
           <div className="space-y-3">
-            <Label htmlFor="year">Year *</Label>
+            <Label htmlFor="year" className="text-white font-medium">Year *</Label>
             <select
               id="year"
               value={formData.year}
               onChange={(e) => setFormData(prev => ({ ...prev, year: parseInt(e.target.value) }))}
-              className="w-full h-10 px-3 py-2 text-sm rounded-md border border-input bg-background"
+              className="w-full h-10 px-3 py-2 text-sm rounded-md border border-gray-700 bg-gray-800 text-white"
               required
             >
               {YEARS.map((year) => (
