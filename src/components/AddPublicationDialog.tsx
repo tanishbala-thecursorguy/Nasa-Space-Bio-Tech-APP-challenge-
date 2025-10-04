@@ -14,7 +14,7 @@ interface AddPublicationDialogProps {
   onPublicationAdded: () => void;
 }
 
-const SPECIES_OPTIONS = ['Humans', 'Animals', 'Cell Lines', 'Plants', 'Microbes'];
+const SPECIES_OPTIONS = ['Humans', 'Animals', 'Cell Lines', 'Plants'];
 const MISSION_OPTIONS = [
   'ISS',
   'Moon Simulations',
@@ -26,9 +26,10 @@ const YEARS = Array.from({ length: 10 }, (_, i) => 2015 + i);
 
 export function AddPublicationDialog({ open, onOpenChange, onPublicationAdded }: AddPublicationDialogProps) {
   const [formData, setFormData] = useState({
-    title: '',
+    author_name: '',
+    project_name: '',
     summary: '',
-    research_link: '',
+    project_link: '',
     species: [] as string[],
     missions: [] as string[],
     year: new Date().getFullYear()
@@ -59,16 +60,20 @@ export function AddPublicationDialog({ open, onOpenChange, onPublicationAdded }:
     setError(null);
 
     // Validation
-    if (!formData.title.trim()) {
-      setError('Title is required');
+    if (!formData.author_name.trim()) {
+      setError('Name is required');
+      return;
+    }
+    if (!formData.project_name.trim()) {
+      setError('Project name is required');
       return;
     }
     if (!formData.summary.trim()) {
       setError('Summary is required');
       return;
     }
-    if (!formData.research_link.trim()) {
-      setError('Research link is required');
+    if (!formData.project_link.trim()) {
+      setError('Project link is required');
       return;
     }
     if (formData.species.length === 0) {
@@ -84,9 +89,10 @@ export function AddPublicationDialog({ open, onOpenChange, onPublicationAdded }:
 
     try {
       const publicationData: PublicationInsert = {
-        title: formData.title.trim(),
+        author_name: formData.author_name.trim(),
+        project_name: formData.project_name.trim(),
         summary: formData.summary.trim(),
-        research_link: formData.research_link.trim(),
+        project_link: formData.project_link.trim(),
         species: formData.species,
         missions: formData.missions,
         year: formData.year
@@ -100,9 +106,10 @@ export function AddPublicationDialog({ open, onOpenChange, onPublicationAdded }:
 
       // Reset form
       setFormData({
-        title: '',
+        author_name: '',
+        project_name: '',
         summary: '',
-        research_link: '',
+        project_link: '',
         species: [],
         missions: [],
         year: new Date().getFullYear()
@@ -129,14 +136,26 @@ export function AddPublicationDialog({ open, onOpenChange, onPublicationAdded }:
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Title */}
+          {/* Author Name */}
           <div className="space-y-2">
-            <Label htmlFor="title">Title *</Label>
+            <Label htmlFor="author_name">Name *</Label>
             <Input
-              id="title"
-              placeholder="Enter publication title"
-              value={formData.title}
-              onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+              id="author_name"
+              placeholder="Enter your name"
+              value={formData.author_name}
+              onChange={(e) => setFormData(prev => ({ ...prev, author_name: e.target.value }))}
+              required
+            />
+          </div>
+
+          {/* Project Name */}
+          <div className="space-y-2">
+            <Label htmlFor="project_name">Project Name *</Label>
+            <Input
+              id="project_name"
+              placeholder="Enter project name"
+              value={formData.project_name}
+              onChange={(e) => setFormData(prev => ({ ...prev, project_name: e.target.value }))}
               required
             />
           </div>
@@ -146,23 +165,23 @@ export function AddPublicationDialog({ open, onOpenChange, onPublicationAdded }:
             <Label htmlFor="summary">Summary *</Label>
             <Textarea
               id="summary"
-              placeholder="Enter publication summary"
+              placeholder="Enter project summary (10-15 lines recommended, but no limit)"
               value={formData.summary}
               onChange={(e) => setFormData(prev => ({ ...prev, summary: e.target.value }))}
-              rows={4}
+              rows={6}
               required
             />
           </div>
 
-          {/* Research Link */}
+          {/* Project Link */}
           <div className="space-y-2">
-            <Label htmlFor="research_link">Research Link *</Label>
+            <Label htmlFor="project_link">Project Link *</Label>
             <Input
-              id="research_link"
+              id="project_link"
               type="url"
-              placeholder="https://example.com/research-paper"
-              value={formData.research_link}
-              onChange={(e) => setFormData(prev => ({ ...prev, research_link: e.target.value }))}
+              placeholder="https://example.com/your-project"
+              value={formData.project_link}
+              onChange={(e) => setFormData(prev => ({ ...prev, project_link: e.target.value }))}
               required
             />
           </div>

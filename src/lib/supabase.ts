@@ -12,9 +12,10 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 // Database Types
 export interface Publication {
   id: string;
-  title: string;
+  author_name: string;
+  project_name: string;
   summary: string;
-  research_link: string;
+  project_link: string;
   species: string[];
   missions: string[];
   year: number;
@@ -23,9 +24,10 @@ export interface Publication {
 }
 
 export interface PublicationInsert {
-  title: string;
+  author_name: string;
+  project_name: string;
   summary: string;
-  research_link: string;
+  project_link: string;
   species: string[];
   missions: string[];
   year: number;

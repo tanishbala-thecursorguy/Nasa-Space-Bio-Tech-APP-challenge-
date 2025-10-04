@@ -139,7 +139,7 @@ export const PublicationsGrid: React.FC<PublicationsGridProps> = ({
                 <ExternalLink className="w-4 h-4 text-gray-400" />
               </div>
               <CardTitle className="text-white text-base line-clamp-2">
-                {publication.title}
+                {publication.project_name}
               </CardTitle>
               <CardDescription className="text-gray-400 text-sm line-clamp-3 mt-2">
                 {publication.summary}

@@ -26,9 +26,10 @@ Go to your Supabase project dashboard and run the following SQL query in the SQL
 -- Create publications table
 CREATE TABLE publications (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  title TEXT NOT NULL,
+  author_name TEXT NOT NULL,
+  project_name TEXT NOT NULL,
   summary TEXT NOT NULL,
-  research_link TEXT NOT NULL,
+  project_link TEXT NOT NULL,
   species TEXT[] NOT NULL,
   missions TEXT[] NOT NULL,
   year INTEGER NOT NULL CHECK (year >= 2015 AND year <= 2025),
@@ -106,10 +107,11 @@ After running the SQL, verify that:
 | Column | Type | Description |
 |--------|------|-------------|
 | `id` | UUID | Primary key (auto-generated) |
-| `title` | TEXT | Publication title (required) |
-| `summary` | TEXT | Publication summary (required) |
-| `research_link` | TEXT | URL to research paper (required) |
-| `species` | TEXT[] | Array of species (Humans, Animals, Cell Lines, Plants, Microbes) |
+| `author_name` | TEXT | Author/contributor name (required) |
+| `project_name` | TEXT | Project name shown in dashboard (required) |
+| `summary` | TEXT | Project summary (required, no limit) |
+| `project_link` | TEXT | URL to project (required) |
+| `species` | TEXT[] | Array of species (Humans, Animals, Cell Lines, Plants) |
 | `missions` | TEXT[] | Array of mission types (ISS, Moon Simulations, etc.) |
 | `year` | INTEGER | Year (2015-2025) |
 | `created_at` | TIMESTAMP | Auto-generated creation timestamp |
@@ -151,19 +153,21 @@ The app supports filtering by:
 To add sample data, you can run this in the SQL Editor:
 
 ```sql
-INSERT INTO publications (title, summary, research_link, species, missions, year)
+INSERT INTO publications (author_name, project_name, summary, project_link, species, missions, year)
 VALUES
   (
+    'Dr. Jane Smith',
     'Effects of Microgravity on Human Bone Density',
-    'This study examines the impact of prolonged exposure to microgravity on astronaut bone density during ISS missions. Results show significant bone loss in lower extremities.',
+    'This study examines the impact of prolonged exposure to microgravity on astronaut bone density during ISS missions. Results show significant bone loss in lower extremities, particularly in the femur and tibia. The research involved 24 astronauts over 6-month missions.',
     'https://example.com/bone-density-study',
     ARRAY['Humans'],
     ARRAY['ISS', 'Microgravity Studies'],
     2023
   ),
   (
+    'John Doe',
     'Plant Growth in Lunar Regolith Simulant',
-    'Research on growing various plant species in lunar soil simulant to support future Moon base food production systems.',
+    'Research on growing various plant species in lunar soil simulant to support future Moon base food production systems. We tested tomatoes, lettuce, and radishes under controlled conditions.',
     'https://example.com/lunar-plants',
     ARRAY['Plants'],
     ARRAY['Moon Simulations'],

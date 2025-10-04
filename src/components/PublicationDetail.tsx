@@ -37,10 +37,14 @@ export const PublicationDetail: React.FC<PublicationDetailProps> = ({ publicatio
           </div>
 
           <CardTitle className="text-3xl text-white pr-12">
-            {publication.title}
+            {publication.project_name}
           </CardTitle>
 
-          <CardDescription className="text-gray-400 text-base mt-4">
+          <CardDescription className="text-gray-400 text-base mt-2">
+            <span className="text-white font-medium">By:</span> {publication.author_name}
+          </CardDescription>
+
+          <CardDescription className="text-gray-400 text-sm mt-2">
             Added on {new Date(publication.created_at).toLocaleDateString('en-US', {
               year: 'numeric',
               month: 'long',
@@ -88,17 +92,17 @@ export const PublicationDetail: React.FC<PublicationDetailProps> = ({ publicatio
             </div>
           </div>
 
-          {/* Research Link */}
+          {/* Project Link */}
           <div>
-            <h3 className="text-lg font-medium text-white mb-3">Research Link</h3>
+            <h3 className="text-lg font-medium text-white mb-3">Project Link</h3>
             <a
-              href={publication.research_link}
+              href={publication.project_link}
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-400 hover:text-blue-300 transition-colors break-all flex items-center gap-2"
             >
               <ExternalLink className="w-4 h-4 flex-shrink-0" />
-              {publication.research_link}
+              {publication.project_link}
             </a>
           </div>
 
@@ -106,10 +110,10 @@ export const PublicationDetail: React.FC<PublicationDetailProps> = ({ publicatio
           <div className="pt-4 border-t border-gray-700">
             <Button
               className="w-full bg-blue-600 hover:bg-blue-700"
-              onClick={() => window.open(publication.research_link, '_blank')}
+              onClick={() => window.open(publication.project_link, '_blank')}
             >
               <ExternalLink className="w-4 h-4 mr-2" />
-              Open Research Paper
+              Open Project
             </Button>
           </div>
         </CardContent>

@@ -28,8 +28,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
     { id: 'Humans', label: 'Humans' },
     { id: 'Animals', label: 'Animals' },
     { id: 'Cell Lines', label: 'Cell Lines' },
-    { id: 'Plants', label: 'Plants' },
-    { id: 'Microbes', label: 'Microbes' }
+    { id: 'Plants', label: 'Plants' }
   ];
 
   const missionOptions = [
