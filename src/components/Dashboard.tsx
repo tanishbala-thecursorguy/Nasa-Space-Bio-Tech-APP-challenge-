@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { SpaceBackground } from './SpaceBackground';
 import { Header } from './Header';
@@ -22,12 +22,43 @@ export const Dashboard: React.FC = () => {
   const [filters, setFilters] = useState({
     species: [] as string[],
     missions: [] as string[],
-    yearRange: [2015, 2025] as [number, number]
+    yearRange: [2015, 2024] as [number, number]
   });
 
   const handlePublicationAdded = () => {
-    setRefreshTrigger(prev => prev + 1);
+    console.log('🔄 handlePublicationAdded called, incrementing refresh trigger');
+    setRefreshTrigger(prev => {
+      const newValue = prev + 1;
+      console.log('📈 Refresh trigger changed from', prev, 'to', newValue);
+      return newValue;
+    });
   };
+
+  useEffect(() => {
+    // Add a test publication to localStorage for debugging
+    const testPublication = {
+      id: crypto.randomUUID(),
+      author_name: 'Test Author',
+      project_name: 'Test Space Biology Project',
+      summary: 'This is a test publication about space biology research conducted on the ISS. The study examines the effects of microgravity on human cells and provides valuable insights for future space missions.',
+      project_link: 'https://example.com/test-project',
+      species: ['Humans'],
+      missions: ['ISS'],
+      year: 2024,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+
+    const existingPublications = JSON.parse(localStorage.getItem('publications') || '[]');
+    console.log('📚 Current publications in localStorage:', existingPublications);
+    
+    if (existingPublications.length === 0) {
+      localStorage.setItem('publications', JSON.stringify([testPublication]));
+      console.log('🧪 Added test publication to localStorage:', testPublication);
+    } else {
+      console.log('📚 Found existing publications:', existingPublications.length);
+    }
+  }, []);
 
   return (
     <div className="h-screen bg-black overflow-hidden">

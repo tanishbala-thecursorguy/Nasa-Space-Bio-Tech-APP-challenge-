@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Publications</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0f172a;
+            color: white;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .test-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+        }
+        .test-btn:hover {
+            background: #2563eb;
+        }
+        .status {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+            background: rgba(34, 197, 94, 0.2);
+            border: 1px solid #22c55e;
+        }
+        .code-block {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test Publications</h1>
+        
+        <button class="test-btn" onclick="addTestPublication()">Add Test Publication</button>
+        <button class="test-btn" onclick="clearPublications()">Clear All Publications</button>
+        <button class="test-btn" onclick="showPublications()">Show Current Publications</button>
+        
+        <div id="status"></div>
+        <div id="publications"></div>
+    </div>
+
+    <script>
+        function addTestPublication() {
+            const testPublication = {
+                id: crypto.randomUUID(),
+                author_name: 'Test Author',
+                project_name: 'Test Space Biology Project',
+                summary: 'This is a test publication about space biology research conducted on the ISS. The study examines the effects of microgravity on human cells and provides valuable insights for future space missions.',
+                project_link: 'https://example.com/test-project',
+                species: ['Humans'],
+                missions: ['ISS'],
+                year: 2024,
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString()
+            };
+
+            const publications = JSON.parse(localStorage.getItem('publications') || '[]');
+            publications.push(testPublication);
+            localStorage.setItem('publications', JSON.stringify(publications));
+
+            document.getElementById('status').innerHTML = '<div class="status">✅ Test publication added!</div>';
+            showPublications();
+        }
+
+        function clearPublications() {
+            localStorage.removeItem('publications');
+            document.getElementById('status').innerHTML = '<div class="status">🗑️ All publications cleared!</div>';
+            showPublications();
+        }
+
+        function showPublications() {
+            const publications = JSON.parse(localStorage.getItem('publications') || '[]');
+            const publicationsDiv = document.getElementById('publications');
+            
+            if (publications.length === 0) {
+                publicationsDiv.innerHTML = '<div class="status">No publications found in localStorage</div>';
+                return;
+            }
+
+            let html = '<h3>Current Publications:</h3>';
+            publications.forEach((pub, index) => {
+                html += `
+                    <div class="code-block">
+                        <strong>Publication ${index + 1}:</strong><br>
+                        ID: ${pub.id}<br>
+                        Author: ${pub.author_name}<br>
+                        Project: ${pub.project_name}<br>
+                        Species: ${pub.species.join(', ')}<br>
+                        Missions: ${pub.missions.join(', ')}<br>
+                        Year: ${pub.year}<br>
+                        Created: ${pub.created_at}
+                    </div>
+                `;
+            });
+            
+            publicationsDiv.innerHTML = html;
+        }
+
+        // Show current publications on load
+        showPublications();
+    </script>
+</body>
+</html>
