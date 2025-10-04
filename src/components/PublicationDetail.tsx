@@ -1,17 +1,63 @@
-import React from 'react';
-import { Publication } from '../lib/supabase';
+import React, { useState } from 'react';
+import { Publication, supabase } from '../lib/supabase';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from './ui/card';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
-import { ExternalLink, X, Calendar, Dna, Rocket } from 'lucide-react';
+import { ExternalLink, X, Calendar, Dna, Rocket, Trash2 } from 'lucide-react';
 
 interface PublicationDetailProps {
   publication: Publication | null;
   onClose: () => void;
+  onDelete?: () => void;
 }
 
-export const PublicationDetail: React.FC<PublicationDetailProps> = ({ publication, onClose }) => {
+export const PublicationDetail: React.FC<PublicationDetailProps> = ({ publication, onClose, onDelete }) => {
+  const [isDeleting, setIsDeleting] = useState(false);
+
   if (!publication) return null;
+
+  const handleDelete = async () => {
+    const confirmDelete = window.confirm(
+      `Are you sure you want to delete this publication?\n\n"${publication.project_name}"\n\nThis action cannot be undone!`
+    );
+
+    if (!confirmDelete) return;
+
+    setIsDeleting(true);
+    console.log('🗑️ Deleting publication:', publication.id);
+
+    try {
+      const { error } = await supabase
+        .from('publications')
+        .delete()
+        .eq('id', publication.id);
+
+      if (error) {
+        console.error('❌ Error deleting publication:', error);
+        alert('Error deleting publication: ' + error.message);
+        setIsDeleting(false);
+        return;
+      }
+
+      console.log('✅ Publication deleted successfully!');
+      alert('✅ Publication deleted successfully!');
+      
+      // Close the modal
+      onClose();
+      
+      // Trigger refresh
+      if (onDelete) {
+        onDelete();
+      }
+      
+      // Reload page to show updated list
+      window.location.reload();
+    } catch (err) {
+      console.error('❌ Unexpected error deleting publication:', err);
+      alert('An unexpected error occurred while deleting the publication.');
+      setIsDeleting(false);
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
@@ -106,14 +152,24 @@ export const PublicationDetail: React.FC<PublicationDetailProps> = ({ publicatio
             </a>
           </div>
 
-          {/* Action Button */}
-          <div className="pt-4 border-t border-gray-700">
+          {/* Action Buttons */}
+          <div className="pt-4 border-t border-gray-700 space-y-3">
             <Button
               className="w-full bg-blue-600 hover:bg-blue-700"
               onClick={() => window.open(publication.project_link, '_blank')}
             >
               <ExternalLink className="w-4 h-4 mr-2" />
               Open Project
+            </Button>
+            
+            <Button
+              variant="destructive"
+              className="w-full bg-red-600 hover:bg-red-700"
+              onClick={handleDelete}
+              disabled={isDeleting}
+            >
+              <Trash2 className="w-4 h-4 mr-2" />
+              {isDeleting ? 'Deleting...' : 'Delete Publication'}
             </Button>
           </div>
         </CardContent>

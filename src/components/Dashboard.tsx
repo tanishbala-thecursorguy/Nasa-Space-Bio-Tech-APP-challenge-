@@ -110,6 +110,7 @@ export const Dashboard: React.FC = () => {
         <PublicationDetail
           publication={selectedPublication}
           onClose={() => setSelectedPublication(null)}
+          onDelete={handlePublicationAdded}
         />
       )}
     </div>
