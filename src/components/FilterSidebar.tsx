@@ -25,18 +25,19 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
   onFiltersChange 
 }) => {
   const speciesOptions = [
-    { id: 'humans', label: 'Humans' },
-    { id: 'animals', label: 'Animals' },
-    { id: 'cell-lines', label: 'Cell Lines' },
-    { id: 'plants', label: 'Plants' }
+    { id: 'Humans', label: 'Humans' },
+    { id: 'Animals', label: 'Animals' },
+    { id: 'Cell Lines', label: 'Cell Lines' },
+    { id: 'Plants', label: 'Plants' },
+    { id: 'Microbes', label: 'Microbes' }
   ];
 
   const missionOptions = [
-    { id: 'iss', label: 'ISS' },
-    { id: 'moon', label: 'Moon Simulations' },
-    { id: 'mars', label: 'Mars Simulations' },
-    { id: 'radiation', label: 'Radiation Studies' },
-    { id: 'microgravity', label: 'Microgravity Studies' }
+    { id: 'ISS', label: 'ISS' },
+    { id: 'Moon Simulations', label: 'Moon Simulations' },
+    { id: 'Mars Simulations', label: 'Mars Simulations' },
+    { id: 'Radiation Studies', label: 'Radiation Studies' },
+    { id: 'Microgravity Studies', label: 'Microgravity Studies' }
   ];
 
   const updateFilters = (key: string, value: any) => {

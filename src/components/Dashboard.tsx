@@ -4,16 +4,20 @@ import { SpaceBackground } from './SpaceBackground';
 import { Header } from './Header';
 import { FilterSidebar } from './FilterSidebar';
 import { PublicationsGrid } from './PublicationsGrid';
+import { PublicationDetail } from './PublicationDetail';
 import { ChatbotPanel } from './ChatbotPanel';
 import { KnowledgeGraph } from './KnowledgeGraph';
 import { ChartsPanel } from './ChartsPanel';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { FileText, Network, BarChart3 } from 'lucide-react';
+import { Publication } from '../lib/supabase';
 
 export const Dashboard: React.FC = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [chatbotOpen, setChatbotOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('publications');
+  const [selectedPublication, setSelectedPublication] = useState<Publication | null>(null);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
   
   const [filters, setFilters] = useState({
     species: [] as string[],
@@ -21,12 +25,16 @@ export const Dashboard: React.FC = () => {
     yearRange: [2015, 2025] as [number, number]
   });
 
+  const handlePublicationAdded = () => {
+    setRefreshTrigger(prev => prev + 1);
+  };
+
   return (
     <div className="h-screen bg-black overflow-hidden">
       <SpaceBackground showImage={false} />
       
       <div className="relative z-10 h-full flex flex-col">
-        <Header />
+        <Header onPublicationAdded={handlePublicationAdded} />
         
         <div className="flex-1 flex overflow-hidden">
           <FilterSidebar
@@ -63,7 +71,11 @@ export const Dashboard: React.FC = () => {
                 
                 <div className="flex-1 overflow-hidden">
                   <TabsContent value="publications" className="h-full overflow-auto">
-                    <PublicationsGrid />
+                    <PublicationsGrid 
+                      filters={filters}
+                      refreshTrigger={refreshTrigger}
+                      onPublicationClick={setSelectedPublication}
+                    />
                   </TabsContent>
                   
                   <TabsContent value="knowledge-graph" className="h-full overflow-auto p-6">
@@ -84,6 +96,14 @@ export const Dashboard: React.FC = () => {
         isOpen={chatbotOpen}
         onToggle={() => setChatbotOpen(!chatbotOpen)}
       />
+
+      {/* Publication Detail Modal */}
+      {selectedPublication && (
+        <PublicationDetail
+          publication={selectedPublication}
+          onClose={() => setSelectedPublication(null)}
+        />
+      )}
     </div>
   );
 };
