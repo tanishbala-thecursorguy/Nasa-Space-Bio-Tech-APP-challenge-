@@ -22,7 +22,7 @@ const MISSION_OPTIONS = [
   'Radiation Studies',
   'Microgravity Studies'
 ];
-const YEARS = Array.from({ length: 10 }, (_, i) => 2015 + i);
+const YEARS = Array.from({ length: 11 }, (_, i) => 2015 + i); // 2015 to 2025
 
 export function AddPublicationDialog({ open, onOpenChange, onPublicationAdded }: AddPublicationDialogProps) {
   const [formData, setFormData] = useState({

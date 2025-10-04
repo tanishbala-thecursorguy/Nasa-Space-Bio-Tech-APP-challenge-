@@ -22,7 +22,7 @@ export const Dashboard: React.FC = () => {
   const [filters, setFilters] = useState({
     species: [] as string[],
     missions: [] as string[],
-    yearRange: [2015, 2024] as [number, number]
+    yearRange: [2015, 2025] as [number, number]
   });
 
   const handlePublicationAdded = () => {
