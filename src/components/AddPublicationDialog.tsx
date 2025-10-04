@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from './ui/dialog';
+import { SimpleDialog } from './SimpleDialog';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
@@ -136,14 +136,15 @@ export function AddPublicationDialog({ open, onOpenChange, onPublicationAdded }:
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange} modal={true}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-gray-900 text-white">
-        <DialogHeader>
-          <DialogTitle>Add New Publication</DialogTitle>
-          <DialogDescription>
+    <SimpleDialog open={open} onClose={() => onOpenChange(false)}>
+      <div className="p-6">
+        {/* Header */}
+        <div className="mb-6">
+          <h2 className="text-2xl font-semibold text-white">Add New Publication</h2>
+          <p className="text-gray-400 text-sm mt-2">
             Add a new research publication to the NASA Space Biology database.
-          </DialogDescription>
-        </DialogHeader>
+          </p>
+        </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Author Name */}
@@ -264,7 +265,8 @@ export function AddPublicationDialog({ open, onOpenChange, onPublicationAdded }:
             </div>
           )}
 
-          <DialogFooter>
+          {/* Footer Buttons */}
+          <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 mt-6">
             <Button
               type="button"
               variant="secondary"
@@ -273,14 +275,14 @@ export function AddPublicationDialog({ open, onOpenChange, onPublicationAdded }:
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={isSubmitting}>
+            <Button type="submit" disabled={isSubmitting} className="bg-blue-600 hover:bg-blue-700">
               {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {isSubmitting ? 'Adding...' : 'Add Publication'}
             </Button>
-          </DialogFooter>
+          </div>
         </form>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </SimpleDialog>
   );
 }
 
