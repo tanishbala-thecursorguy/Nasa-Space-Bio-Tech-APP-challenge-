@@ -26,12 +26,14 @@ export const Dashboard: React.FC = () => {
   });
 
   const handlePublicationAdded = () => {
-    console.log('🔄 handlePublicationAdded called, incrementing refresh trigger');
+    console.log('🔄🔄🔄 handlePublicationAdded called - REFRESHING PUBLICATIONS 🔄🔄🔄');
     setRefreshTrigger(prev => {
       const newValue = prev + 1;
       console.log('📈 Refresh trigger changed from', prev, 'to', newValue);
       return newValue;
     });
+    // Force a manual refresh of the page to ensure we see the new publication
+    window.location.reload();
   };
 
 

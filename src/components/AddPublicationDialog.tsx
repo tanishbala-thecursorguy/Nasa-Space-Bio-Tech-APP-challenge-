@@ -137,6 +137,11 @@ export function AddPublicationDialog({ open, onOpenChange, onPublicationAdded }:
       }
 
       console.log('✅ Publication added successfully!');
+      alert('✅ Publication added successfully!');
+
+      // Close dialog first
+      console.log('🎉 Closing dialog...');
+      onOpenChange(false);
 
       // Reset form
       setFormData({
@@ -149,13 +154,12 @@ export function AddPublicationDialog({ open, onOpenChange, onPublicationAdded }:
         year: new Date().getFullYear()
       });
 
+      // Trigger refresh with a small delay to ensure database has committed
       console.log('🔄 Triggering refresh...');
-      onPublicationAdded();
-      
-      console.log('🎉 Closing dialog...');
-      onOpenChange(false);
-      
-      alert('Publication added successfully! Check the Publications tab.');
+      setTimeout(() => {
+        console.log('📡 Calling onPublicationAdded');
+        onPublicationAdded();
+      }, 100);
     } catch (err) {
       console.error('❌ Error adding publication:', err);
       const errorMessage = err instanceof Error ? err.message : 'Failed to add publication';
