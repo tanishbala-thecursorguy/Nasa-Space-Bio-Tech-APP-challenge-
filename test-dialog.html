@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Dialog</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #1a1a1a;
+            color: white;
+        }
+        button {
+            background: #2563eb;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #1d4ed8;
+        }
+        #status {
+            margin-top: 20px;
+            padding: 10px;
+            background: #333;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Post Button Test</h1>
+    <p>This page tests if the Post button functionality is working.</p>
+    
+    <button onclick="testPostButton()">🧪 Test Post Button Click</button>
+    
+    <div id="status"></div>
+
+    <script>
+        function testPostButton() {
+            const status = document.getElementById('status');
+            status.innerHTML = '<h3>Test Results:</h3>';
+            
+            // Test 1: Check if app is accessible
+            fetch('http://localhost:3000')
+                .then(response => {
+                    status.innerHTML += '✅ App is accessible<br>';
+                    return response.text();
+                })
+                .then(html => {
+                    // Check if React root exists
+                    if (html.includes('root')) {
+                        status.innerHTML += '✅ React root found in HTML<br>';
+                    } else {
+                        status.innerHTML += '❌ React root not found<br>';
+                    }
+                    
+                    status.innerHTML += '<br><strong>Next steps:</strong><br>';
+                    status.innerHTML += '1. Open http://localhost:3000 in your browser<br>';
+                    status.innerHTML += '2. Open Developer Console (F12)<br>';
+                    status.innerHTML += '3. Click the blue "Post" button in top-right<br>';
+                    status.innerHTML += '4. Check console for logs<br>';
+                    status.innerHTML += '5. Dialog should appear with form<br>';
+                })
+                .catch(err => {
+                    status.innerHTML += '❌ Error: ' + err.message + '<br>';
+                });
+        }
+        
+        // Auto-run test on load
+        window.onload = () => {
+            setTimeout(testPostButton, 500);
+        };
+    </script>
+</body>
+</html>
+

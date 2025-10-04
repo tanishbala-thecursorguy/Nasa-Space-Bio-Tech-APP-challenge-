@@ -11,8 +11,10 @@ export const Header: React.FC<HeaderProps> = ({ onPublicationAdded }) => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
   const handleOpenDialog = () => {
-    console.log('Post button clicked, opening dialog...');
+    console.log('🔵 Post button clicked!');
+    console.log('📊 Current dialog state:', isAddDialogOpen);
     setIsAddDialogOpen(true);
+    console.log('✅ Dialog state set to true');
   };
 
   return (
@@ -36,10 +38,15 @@ export const Header: React.FC<HeaderProps> = ({ onPublicationAdded }) => {
             <Button
               onClick={handleOpenDialog}
               className="bg-blue-600 hover:bg-blue-700 text-white"
+              type="button"
+              aria-label="Add new publication"
             >
               <Plus className="w-4 h-4 mr-2" />
               Post
             </Button>
+            {isAddDialogOpen && (
+              <span className="text-xs text-green-400">Dialog Open</span>
+            )}
           </div>
         </div>
       </header>

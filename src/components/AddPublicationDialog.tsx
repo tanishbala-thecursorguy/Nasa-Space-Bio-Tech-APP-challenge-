@@ -39,8 +39,13 @@ export function AddPublicationDialog({ open, onOpenChange, onPublicationAdded }:
 
   // Debug logging
   React.useEffect(() => {
-    console.log('AddPublicationDialog open state:', open);
+    console.log('🎯 AddPublicationDialog - open state changed:', open);
+    if (open) {
+      console.log('✨ Dialog should be visible now!');
+    }
   }, [open]);
+
+  console.log('🔄 AddPublicationDialog render - open:', open);
 
   const handleSpeciesToggle = (species: string) => {
     setFormData(prev => ({
@@ -131,8 +136,8 @@ export function AddPublicationDialog({ open, onOpenChange, onPublicationAdded }:
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+    <Dialog open={open} onOpenChange={onOpenChange} modal={true}>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-gray-900 text-white">
         <DialogHeader>
           <DialogTitle>Add New Publication</DialogTitle>
           <DialogDescription>
