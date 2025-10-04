@@ -96,6 +96,7 @@ export function AddPublicationDialog({ open, onOpenChange, onPublicationAdded }:
     }
 
     setIsSubmitting(true);
+    console.log('🚀 Starting to add publication...');
 
     try {
       const publicationData: PublicationInsert = {
@@ -108,11 +109,22 @@ export function AddPublicationDialog({ open, onOpenChange, onPublicationAdded }:
         year: formData.year
       };
 
-      const { error: insertError } = await supabase
-        .from('publications')
-        .insert([publicationData]);
+      console.log('📝 Publication data to insert:', publicationData);
 
-      if (insertError) throw insertError;
+      const { data, error: insertError } = await supabase
+        .from('publications')
+        .insert([publicationData])
+        .select();
+
+      console.log('📥 Supabase response - data:', data);
+      console.log('📥 Supabase response - error:', insertError);
+
+      if (insertError) {
+        console.error('❌ Insert error:', insertError);
+        throw insertError;
+      }
+
+      console.log('✅ Publication added successfully!');
 
       // Reset form
       setFormData({
@@ -125,11 +137,18 @@ export function AddPublicationDialog({ open, onOpenChange, onPublicationAdded }:
         year: new Date().getFullYear()
       });
 
+      console.log('🔄 Triggering refresh...');
       onPublicationAdded();
+      
+      console.log('🎉 Closing dialog...');
       onOpenChange(false);
+      
+      alert('Publication added successfully! Check the Publications tab.');
     } catch (err) {
-      console.error('Error adding publication:', err);
-      setError(err instanceof Error ? err.message : 'Failed to add publication');
+      console.error('❌ Error adding publication:', err);
+      const errorMessage = err instanceof Error ? err.message : 'Failed to add publication';
+      setError(errorMessage);
+      alert('Error: ' + errorMessage + '\n\nPlease check the console for details and make sure you have set up the Supabase database table.');
     } finally {
       setIsSubmitting(false);
     }

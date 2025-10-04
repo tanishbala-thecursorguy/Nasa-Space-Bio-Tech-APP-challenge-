@@ -30,12 +30,15 @@ export const PublicationsGrid: React.FC<PublicationsGridProps> = ({
   const fetchPublications = async () => {
     setLoading(true);
     setError(null);
+    console.log('📚 Fetching publications... refreshTrigger:', refreshTrigger);
 
     try {
       let query = supabase
         .from('publications')
         .select('*')
         .order('created_at', { ascending: false });
+
+      console.log('🔍 Applied filters:', filters);
 
       // Apply species filter
       if (filters.species.length > 0) {
@@ -54,11 +57,15 @@ export const PublicationsGrid: React.FC<PublicationsGridProps> = ({
 
       const { data, error: fetchError } = await query;
 
+      console.log('📊 Fetched publications data:', data);
+      console.log('📊 Fetch error:', fetchError);
+
       if (fetchError) throw fetchError;
 
       setPublications(data || []);
+      console.log('✅ Publications updated! Count:', data?.length || 0);
     } catch (err) {
-      console.error('Error fetching publications:', err);
+      console.error('❌ Error fetching publications:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch publications');
     } finally {
       setLoading(false);
