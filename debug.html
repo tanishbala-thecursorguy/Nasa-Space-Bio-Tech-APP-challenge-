@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Publications</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0f172a;
+            color: white;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .debug-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+        }
+        .debug-btn:hover {
+            background: #2563eb;
+        }
+        .status {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+            background: rgba(34, 197, 94, 0.2);
+            border: 1px solid #22c55e;
+        }
+        .error {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid #ef4444;
+        }
+        .code-block {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Debug Publications</h1>
+        
+        <button class="debug-btn" onclick="checkLocalStorage()">Check localStorage</button>
+        <button class="debug-btn" onclick="addTestData()">Add Test Data</button>
+        <button class="debug-btn" onclick="clearData()">Clear Data</button>
+        <button class="debug-btn" onclick="testSupabaseMock()">Test Supabase Mock</button>
+        
+        <div id="output"></div>
+    </div>
+
+    <script>
+        function checkLocalStorage() {
+            const publications = JSON.parse(localStorage.getItem('publications') || '[]');
+            const output = document.getElementById('output');
+            
+            output.innerHTML = `
+                <div class="status">
+                    <h3>📚 localStorage Check</h3>
+                    <p><strong>Publications count:</strong> ${publications.length}</p>
+                    <div class="code-block">${JSON.stringify(publications, null, 2)}</div>
+                </div>
+            `;
+        }
+
+        function addTestData() {
+            const testPublication = {
+                id: crypto.randomUUID(),
+                author_name: 'Test Author',
+                project_name: 'Test Space Biology Project',
+                summary: 'This is a test publication about space biology research conducted on the ISS.',
+                project_link: 'https://example.com/test-project',
+                species: ['Humans'],
+                missions: ['ISS'],
+                year: 2024,
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString()
+            };
+
+            const publications = JSON.parse(localStorage.getItem('publications') || '[]');
+            publications.push(testPublication);
+            localStorage.setItem('publications', JSON.stringify(publications));
+
+            document.getElementById('output').innerHTML = `
+                <div class="status">
+                    ✅ Test publication added!
+                    <div class="code-block">${JSON.stringify(testPublication, null, 2)}</div>
+                </div>
+            `;
+        }
+
+        function clearData() {
+            localStorage.removeItem('publications');
+            document.getElementById('output').innerHTML = `
+                <div class="status">
+                    🗑️ All publications cleared!
+                </div>
+            `;
+        }
+
+        function testSupabaseMock() {
+            // Mock the Supabase client
+            const supabase = {
+                from: (table) => {
+                    if (table === 'publications') {
+                        return {
+                            select: (columns = '*') => {
+                                const publications = JSON.parse(localStorage.getItem('publications') || '[]');
+                                console.log('📖 Mock Supabase select - found:', publications.length, 'publications');
+                                return Promise.resolve({ data: publications, error: null });
+                            }
+                        };
+                    }
+                    return { select: () => Promise.resolve({ data: [], error: null }) };
+                }
+            };
+
+            // Test the mock
+            supabase.from('publications').select('*').then(result => {
+                document.getElementById('output').innerHTML = `
+                    <div class="status">
+                        <h3>🧪 Supabase Mock Test</h3>
+                        <p><strong>Result:</strong> ${result.data.length} publications found</p>
+                        <div class="code-block">${JSON.stringify(result, null, 2)}</div>
+                    </div>
+                `;
+            });
+        }
+
+        // Auto-check on load
+        checkLocalStorage();
+    </script>
+</body>
+</html>

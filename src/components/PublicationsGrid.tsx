@@ -47,6 +47,9 @@ export const PublicationsGrid: React.FC<PublicationsGridProps> = ({
       let filteredData = data || [];
       console.log('🔍 Before filtering, count:', filteredData.length);
       
+      // TEMPORARY: Skip all filters to test if data is loading
+      console.log('🚨 TEMPORARY: Skipping all filters for debugging');
+      
       // Apply species filter
       if (filters.species.length > 0) {
         console.log('🔍 Filtering by species:', filters.species);
