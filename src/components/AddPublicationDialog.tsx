@@ -37,6 +37,11 @@ export function AddPublicationDialog({ open, onOpenChange, onPublicationAdded }:
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Debug logging
+  React.useEffect(() => {
+    console.log('AddPublicationDialog open state:', open);
+  }, [open]);
+
   const handleSpeciesToggle = (species: string) => {
     setFormData(prev => ({
       ...prev,

@@ -10,6 +10,11 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({ onPublicationAdded }) => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
+  const handleOpenDialog = () => {
+    console.log('Post button clicked, opening dialog...');
+    setIsAddDialogOpen(true);
+  };
+
   return (
     <>
       <header className="bg-gray-900/80 backdrop-blur-sm border-b border-gray-700 px-6 py-4">
@@ -29,7 +34,7 @@ export const Header: React.FC<HeaderProps> = ({ onPublicationAdded }) => {
           {/* Action Buttons */}
           <div className="flex items-center space-x-4">
             <Button
-              onClick={() => setIsAddDialogOpen(true)}
+              onClick={handleOpenDialog}
               className="bg-blue-600 hover:bg-blue-700 text-white"
             >
               <Plus className="w-4 h-4 mr-2" />
