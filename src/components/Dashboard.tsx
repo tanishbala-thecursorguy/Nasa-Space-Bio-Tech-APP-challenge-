@@ -6,10 +6,9 @@ import { FilterSidebar } from './FilterSidebar';
 import { PublicationsGrid } from './PublicationsGrid';
 import { PublicationDetail } from './PublicationDetail';
 import { ChatbotPanel } from './ChatbotPanel';
-import { KnowledgeGraph } from './KnowledgeGraph';
 import { ChartsPanel } from './ChartsPanel';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import { FileText, Network, BarChart3 } from 'lucide-react';
+import { FileText, BarChart3 } from 'lucide-react';
 import { Publication } from '../lib/supabase';
 
 export const Dashboard: React.FC = () => {
@@ -66,10 +65,6 @@ export const Dashboard: React.FC = () => {
                       <FileText className="w-4 h-4" />
                       <span>Publications</span>
                     </TabsTrigger>
-                    <TabsTrigger value="knowledge-graph" className="flex items-center space-x-2">
-                      <Network className="w-4 h-4" />
-                      <span>Knowledge Graph</span>
-                    </TabsTrigger>
                     <TabsTrigger value="analytics" className="flex items-center space-x-2">
                       <BarChart3 className="w-4 h-4" />
                       <span>Analytics</span>
@@ -84,10 +79,6 @@ export const Dashboard: React.FC = () => {
                       refreshTrigger={refreshTrigger}
                       onPublicationClick={setSelectedPublication}
                     />
-                  </TabsContent>
-                  
-                  <TabsContent value="knowledge-graph" className="h-full overflow-auto p-6">
-                    <KnowledgeGraph className="h-full" />
                   </TabsContent>
                   
                   <TabsContent value="analytics" className="h-full overflow-auto p-6">
